@@ -1,0 +1,33 @@
+version: 2.1
+
+orbs:
+  python: circleci/python@0.2.1
+
+jobs:
+  build-and-test:
+    executor: python/default
+    steps:
+      - checkout
+      - python/load-cache
+      - python/install-deps
+      - python/save-cache
+      - run:
+          name: Setup Hadolint
+          command: |
+            # python3 -m venv udemy
+            # source ~/.udemy/bin/activate
+            make install
+            # Install hadolint
+            sudo wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/download/v1.16.3/hadolint-Linux-x86_64
+            sudo chmod +x /bin/hadolint
+      - run:
+          name: Make all
+          command: |
+            make setup
+            source ~/.udemy/bin/activate
+            make all
+
+workflows:
+  main:
+    jobs:
+      - build-and-test
